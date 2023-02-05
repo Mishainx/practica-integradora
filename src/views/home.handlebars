@@ -1,0 +1,21 @@
+<div class="homeHandlebars">
+<h2>Listado de productos</h2>
+    {{#each productsList}}
+        <div class="homeHandlebars2">
+        <div class="homeProperties">
+        <p><strong>{{this.title}}</strong></p>
+        <p class="hideP"><strong>Id: </strong>{{this.id}}</p>
+        <p class="hideP"><strong>Descripción: </strong> {{this.description}}</p>
+        <p class="hideP"><strong>Precio: </strong>{{this.price}}</p>
+        <p class="hideP"><strong>stock: </strong>{{this.stock}}</p>
+        <p class="hideP"><strong>Code: </strong>{{this.code}}</p>
+        <p class="hideP">{{this.thumbnail}}</p>
+        </div>
+        <button id="btnShow" class="btnShow">Ver completo</button>
+        </div>
+
+    {{/each}}
+
+</div>
+
+<script src="/js/homeHandlebars.js"></script>

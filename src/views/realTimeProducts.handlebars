@@ -1,0 +1,50 @@
+<div id="realTimeProducts">
+    {{#each productsList}}
+    <div class="realTimeItem">
+    <div>
+        <p><strong>{{this.title}}</strong></p>
+        <p class="hideP"><strong>Id: </strong>{{this.id}}</p>
+        <p class="hideP"><strong>Description: </strong> {{this.description}}</p>
+        <p class="hideP"><strong>Precio: </strong>{{this.price}}</p>
+        <p class="hideP"><strong>stock: </strong>{{this.stock}}</p>
+        <p class="hideP"><strong>Code: </strong>{{this.code}}</p>
+        <p class="hideP">{{this.thumbnail}}</p>
+    </div>
+    <button class="btnShow">Ver completo</button>
+    </div>
+    {{/each}}
+</div>
+
+<div id="addProductContainer">
+    <form action="" id="addForm">
+        <h2> Agregar producto</h2>
+        <input type="text" placeholder="Nombre del producto" name="productTitle" id="addTitleForm">
+        <input type="text" placeholder="Descripción del producto" name="productDescription" id="addDescriptionForm" >
+        <input type="number" placeholder="Precio del producto" name="productPrice" id="addPriceForm" min="1">
+        <input type="text" placeholder="Código del producto" id="addCodeForm" name="addCodeForm" >
+        <input type="number" placeholder="Stock del producto" id="addStockForm" name="addStockForm" >
+        <input type="file" name="thumbnail" id="addthumbnailForm">
+        <select name="status" id="addStatusForm" required>
+            <option value="True">True</option>
+            <option value="False">False</option>
+        </select>
+        <Button id="addBtnForm">Enviar</Button>
+
+    </form>
+    <div id="invalidCode"></div>
+</div>
+
+<div id="deleteProductContainer">
+    <form>
+        <h2>Eliminar Producto</h2>
+        <input type="number" id="deleteIdForm" placeholder="Id del producto a borrar">
+        <button id="deleteIdBtn">Enviar</button>
+    </form>
+    <div id="idInvalida">
+
+    </div>
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realTimeProducts.js"></script>
