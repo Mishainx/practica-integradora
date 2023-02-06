@@ -44,20 +44,20 @@ router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const response = await cartManager.delete(id);
-    console.log(CartManager.delete(id))
     res.status(200).send({ message: "Carrito eliminado", response });
   } catch (err) {
     res.status(500).send(err.message);
   }
 });
 
-router.put("/:cid/products/:pid", async (req, res) => {
+router.post("/:cid/products/:pid", async (req, res) => {
   const  cartId  = req.params.cid;
   const productId = req.params.pid
   const {quantity} = req.body;
+  console.log(cartId,productId,quantity)
   try {
     const response = await cartManager.update(cartId, productId,quantity);
-    res.status(200).send({ message: "Carrito actualizado", response });
+    res.status(200).send({ message: "Producto agregado al carrito", response });
   } catch (err) {
     res.status(500).send(err.message);
   }

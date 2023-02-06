@@ -44,7 +44,7 @@ class CartManager {
       const productIndex = await selectedCart.products.findIndex((product)=>product.id==productId)
       const newQuantity = await selectedCart.products[productIndex].quantity+quantity
       selectedCart.products[productIndex].quantity = newQuantity
-      const newCart = await cartModel.findByIdAndUpdate(cartId,{products: selectedCart.products})
+      await cartModel.findByIdAndUpdate(cartId,{products: selectedCart.products})
       }
       }
 

@@ -23,8 +23,9 @@ const DB_USER = process.env.DB_USER;
 const DB_PASS = process.env.DB_PASS;
 const DB_NAME = process.env.DB_NAME;
 
-const httpServer = app.listen(PORT, () => {
+const httpServer = app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
+  await messageModel.updateMany({},{status:false})
 });
 
 const socketServer = new Server(httpServer)
@@ -51,7 +52,7 @@ socketServer.on("connection", (socket) => {
   socket.on("message", (data) => {
     mensajes.push(data);
     socketServer.emit("messageLogs", mensajes);
-    messageModel.create({name:data.user,message:data.message})  
+    messageModel.create({name:data.user,message:data.message,status:true})  
   });
 
   socket.on("realTimeConnection",(data)=>{

@@ -1,13 +1,32 @@
 import { Router } from "express";
 import { ProductManager } from "../data/classes/DBManager.js";
+import { productModel } from "../data/models/products.model.js";
 
 const router = Router();
 const productManager = new ProductManager();
 
 router.get("/", async (req, res) => {
   try {
-    const product = await productManager.read();
-    res.status(200).send({ productos: product });
+    const readProducts = await productModel.find()
+    const limit = req.query.limit
+    let response;
+    if(readProducts.length >0){
+      if(limit && !isNaN(Number(limit))){
+        let products = await productModel.find()
+        response = products.slice(0,limit)
+        res.status(200).send(response)
+      }
+    else{
+        response = readProducts
+        res.status(200).send(response)
+    }  
+    }
+    else{
+      response = "El listado no cuenta con productos"
+      res.status(200).send(response)
+    }
+  
+
   } catch (err) {
     res.status(500).send(err.message);
   }

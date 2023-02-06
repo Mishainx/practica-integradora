@@ -23,10 +23,11 @@ Swal.fire({
 chatBox.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
     if (chatBox.value.trim().length > 0) {
+      console.log(socket)
       const message = chatBox.value
       socket.emit("message", {
         user,
-        message
+        message,
       });
       chatBox.value = "";
     }
@@ -60,15 +61,17 @@ function firstLoad() {
     })
     .then((data) => {
       let message = "";
-
+      
       data.forEach((elem) => {
-        message += `
-      <div class="chat-message">
-        <div class="message-bubble">
-          <p>${elem.name} dice: ${elem.message}</p>
-        </div>
-      </div>
-      `;
+        if(elem.status == true){
+          message += `
+          <div class="chat-message">
+            <div class="message-bubble">
+              <p>${elem.name} dice: ${elem.message}</p>
+            </div>
+          </div>
+          `;
+        }
       });
 
       log.innerHTML = message;
