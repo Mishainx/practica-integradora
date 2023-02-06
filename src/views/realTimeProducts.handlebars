@@ -3,7 +3,7 @@
     <div class="realTimeItem">
     <div>
         <p><strong>{{this.title}}</strong></p>
-        <p class="hideP"><strong>Id: </strong>{{this.id}}</p>
+        <p class="hideP"><strong>Id: </strong>{{this._id}}</p>
         <p class="hideP"><strong>Description: </strong> {{this.description}}</p>
         <p class="hideP"><strong>Precio: </strong>{{this.price}}</p>
         <p class="hideP"><strong>stock: </strong>{{this.stock}}</p>
@@ -22,6 +22,7 @@
         <input type="text" placeholder="Descripción del producto" name="productDescription" id="addDescriptionForm" >
         <input type="number" placeholder="Precio del producto" name="productPrice" id="addPriceForm" min="1">
         <input type="text" placeholder="Código del producto" id="addCodeForm" name="addCodeForm" >
+        <input type="text" placeholder="Categoría del producto" id="addCategory" name="addCategory" >
         <input type="number" placeholder="Stock del producto" id="addStockForm" name="addStockForm" >
         <input type="file" name="thumbnail" id="addthumbnailForm">
         <select name="status" id="addStatusForm" required>
@@ -37,7 +38,7 @@
 <div id="deleteProductContainer">
     <form>
         <h2>Eliminar Producto</h2>
-        <input type="number" id="deleteIdForm" placeholder="Id del producto a borrar">
+        <input type="text" id="deleteIdForm" placeholder="Id del producto a borrar">
         <button id="deleteIdBtn">Enviar</button>
     </form>
     <div id="idInvalida">

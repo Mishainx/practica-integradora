@@ -1,5 +1,5 @@
 import cartModel from "../models/carts.model.js";
-import productModel from "../models/products.model.js";
+import {productModel} from "../models/products.model.js";
 
 class CartManager {
   async read() {
@@ -78,9 +78,9 @@ class ProductManager {
 
   async create(product) {
     try {
-      const newProduct = new productModel(product);
-      await newProduct.save();
-      return newProduct;
+        const newProduct = new productModel(product);
+        await newProduct.save();
+        return newProduct;
     } catch (err) {
       throw err;
     }
@@ -113,5 +113,16 @@ class ProductManager {
       throw err;
     }
   }
+
+  async findCode(itemCode){
+    try{
+      const findCodeResult = await productModel.findOne({code:itemCode})
+      return findCodeResult
+    }
+    catch (err) {
+      throw err;
+    }
+  }
+
 }
 export { CartManager, ProductManager };

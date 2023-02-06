@@ -6,7 +6,10 @@ const productCollection = "products";
 const productSchema = new mongoose.Schema({
   title: String,
   description: String,
-  code: String,
+  code: {
+    type:String,
+    unique:true
+  },
   price: Number,
   thumbnail: Array,
   stock: Number,
@@ -14,6 +17,4 @@ const productSchema = new mongoose.Schema({
   status: Boolean,
 });
 
-const productModel = mongoose.model(productCollection, productSchema);
-
-export default productModel;
+export const productModel = mongoose.model(productCollection, productSchema);

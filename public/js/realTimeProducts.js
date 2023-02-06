@@ -6,7 +6,8 @@ let addPriceForm = document.getElementById('addPriceForm')
 let addCodeForm = document.getElementById('addCodeForm')
 let addThumbnailForm = document.getElementById('addThumbnailForm')
 let addStatusForm = document.getElementById('addStatusForm')
-let addStrockForm = document.getElementById('addStockForm')
+let addStockForm = document.getElementById('addStockForm')
+let addCategory = document.getElementById('addCategory')
 let addBtnForm = document.getElementById('addBtnForm')
 let deleteProductContainer = document.getElementById('deleteProductContainer')
 let deleteIdForm = document.getElementById('deleteIdForm')
@@ -15,126 +16,70 @@ let addForm = document.getElementById("addForm")
 let idInvalida = document.getElementById('idInvalida')
 let invalidCode = document.getElementById("invalidCode")
 let itemForm ={}
+let item;
+let findCodeResult;
 
-addProduct()
+createItem()
 deleteProduct()
 
-socket.emit("realTimeConnection", "Cliente conectado")
+socket.emit("realTimeConnection", "Cliente conectado a Real Time Products")
 
+socket.on("findCodeResult", (data)=>{
+    if(data==null){
+        invalidCode.innerHTML=""
+        let succesCodeMsg = document.createElement("p")
+        succesCodeMsg.innerText = "Producto agregado exitósamente"
+        succesCodeMsg.style.color="rgb(23, 123, 25)"
+        invalidCode.append(succesCodeMsg)
+        socket.emit("createItem", item)
 
-//Funciones
+    }
+    else{
+        invalidCode.innerHTML=""
+        let invalidCodeMsg = document.createElement("p")
+        invalidCodeMsg.innerText = "El código ingresado ya se encuentra en el listado"
+        invalidCodeMsg.style.color="rgb(188, 36, 36)"
+        invalidCode.append(invalidCodeMsg)
+    }
+})
 
-
-//Función addProduct
-function addProduct(){
-    addBtnForm.addEventListener("click", function(Event){
-        Event.preventDefault()        
-
-        const titleValidate = addTitleForm.value != ""
+function createItem(){
+    addBtnForm.addEventListener("click",(Event)=>{
+        Event.preventDefault()
+        
+       const titleValidate = addTitleForm.value != ""
         const descriptionValidate = addDescriptionForm.value != ""
         const priceValidate = addPriceForm.value > 0 
         const codeValidate = addCodeForm.value != "" 
         const stockValidate = addStockForm.value > 0 && addStockForm != ""
+        const categoryValidate = addCategory.value != ""
         const statusValidate = addStatusForm.value == "True" || addStatusForm.value == "False"
         
-
-        if(titleValidate,descriptionValidate,priceValidate,stockValidate, codeValidate){
-           socket.emit("findCode", addCodeForm.value)
-           socket.on("resultFindCode", (data)=>{
-            if(data==null){
-                item={
-                    title: addTitleForm.value,
-                    description: addDescriptionForm.value,
-                    price: addPriceForm.value,
-                    stock: addStockForm.value,
-                    code: addCodeForm.value,
-                    thumbnail: [],
-                    status: addStatusForm.value == "True"? true:false
-                }
-                socket.emit("createItem", item)
-                //addForm.reset()
-                invalidCode.innerHTML=""
-                let succesCodeMsg = document.createElement("p")
-                succesCodeMsg.innerText = "Producto agregado exitósamente"
-                succesCodeMsg.style.color="rgb(23, 123, 25)"
-                invalidCode.append(succesCodeMsg)
-            }
-            else{
-                invalidCode.innerHTML=""
-                let invalidCodeMsg = document.createElement("p")
-                invalidCodeMsg.innerText = "El código ingresado ya se encuentra en el listado"
-                invalidCodeMsg.style.color="rgb(188, 36, 36)"
-                invalidCode.append(invalidCodeMsg)
-            }
-
-           
-
-        renderList()
-        
-        })
-    }
-    else{
-        invalidCode.innerHTML=""
+        if(titleValidate,descriptionValidate,priceValidate,stockValidate,codeValidate){
+            socket.emit("findCode", addCodeForm.value)
+            
+            item={
+                title: addTitleForm.value,
+                description: addDescriptionForm.value,
+                price: addPriceForm.value,
+                stock: addStockForm.value,
+                code: addCodeForm.value,
+                thumbnail: [],
+                status: addStatusForm.value == "True"? true:false
+            }       
+ }
+ else{
+    invalidCode.innerHTML=""
         let invalidFormMsg = document.createElement("p")
         invalidFormMsg.innerText = "* Formulario completado incorrrectamente"
         invalidFormMsg.style.color="rgb(188, 36, 36)"
         invalidCode.append(invalidFormMsg)
-    }}
-)}
-        
-//Función deleteProduct
-function deleteProduct(){
-    deleteIdBtn.addEventListener("click", function(Event){
-        Event.preventDefault()
-
-        const itemDelete = deleteIdForm.value
-        const validateId= itemDelete != ""
-
-        if(validateId){       
-            socket.emit("findId", itemDelete )
-            socket.on("resultFindId",(data)=>{
-                if(data!=null){
-                    socket.emit("deleteItem",itemDelete)
-                    idInvalida.innerHTML= ""
-                    let deleteSucces = document.createElement("p")
-                    deleteSucces.innerText = "Productos eliminado exitósamente"
-                    deleteSucces.style.color="rgb(23, 123, 25)"
-                    idInvalida.appendChild(deleteSucces)
-
-                    renderList()
-                }
-                else{
-                    idInvalida.innerHTML= ""
-                    let deleteMsg = document.createElement("p")
-                    deleteMsg.innerText = "* La Id ingresada no se encuentra en el listado de productos"
-                    deleteMsg.style.color = "rgb(188, 36, 36)"
-                    idInvalida.appendChild(deleteMsg)
-                }
-        })}
-        else{
-            idInvalida.innerHTML= ""
-            let deleteMsg = document.createElement("p")
-            deleteMsg.innerText = "* Para eliminar un producto ingrese un Id válida en el formulario"
-            deleteMsg.style.color = "rgb(188, 36, 36)"
-            idInvalida.appendChild(deleteMsg)
-        }
-    }
+}}
 )}
 
-
-
-function showItem(e){
-    let child = e.target
-    let father = child.parentNode
-    let hideP = father.querySelectorAll(".hideP")
-    for(let p of hideP){
-        p.classList.toggle("active")
-    }
-}
-
-    function renderList(){
-        socket.on("newList", (data)=>{
-            realTimeProducts.innerHTML = "<h2>Listado de Productos<h2>"
+socket.on("renderChanges",(data)=>{
+    console.log(data)
+    realTimeProducts.innerHTML = "<h2>Listado de Productos<h2>"
         
             data.forEach(product=>{
                 //Render divProduct
@@ -151,7 +96,7 @@ function showItem(e){
         
                 
                 let productId = document.createElement("p")
-                productId.innerText = `Id: ${product.id}`
+                productId.innerText = `Id: ${product._id}`
                 productId.classList.add("hideP")
         
                 let productDescription = document.createElement("p")
@@ -188,9 +133,58 @@ function showItem(e){
         }
         })
 
-    }
 
-    let btnsShow = document.querySelectorAll(".btnShow")
-    for(let btn of btnsShow){
-        btn.addEventListener("click", showItem)
+        //Función deleteProduct
+function deleteProduct(){
+    deleteIdBtn.addEventListener("click", function(Event){
+        Event.preventDefault()
+
+        const itemDelete = deleteIdForm.value
+        const validateId= itemDelete != "" && itemDelete.trim().length == 24
+
+
+
+        if(validateId){       
+            socket.emit("findId", itemDelete )
+            socket.on("resultFindId",(data)=>{
+                console.log(data)
+                if(data!=null){
+                    socket.emit("deleteItem",itemDelete)
+                    idInvalida.innerHTML= ""
+                    let deleteSucces = document.createElement("p")
+                    deleteSucces.innerText = "* Productos eliminado exitósamente"
+                    deleteSucces.style.color="rgb(23, 123, 25)"
+                    idInvalida.appendChild(deleteSucces)
+                }
+                else{
+                    idInvalida.innerHTML= ""
+                    let deleteMsg = document.createElement("p")
+                    deleteMsg.innerText = "* La Id ingresada no se encuentra en el listado de productos"
+                    deleteMsg.style.color = "rgb(188, 36, 36)"
+                    idInvalida.appendChild(deleteMsg)
+                }
+        })}
+        else{
+            idInvalida.innerHTML= ""
+            let deleteMsg = document.createElement("p")
+            deleteMsg.innerText = "* Para eliminar un producto ingrese un Id válida en el formulario"
+            deleteMsg.style.color = "rgb(188, 36, 36)"
+            idInvalida.appendChild(deleteMsg)
+        }
     }
+)}
+
+
+function showItem(e){
+    let child = e.target
+    let father = child.parentNode
+    let hideP = father.querySelectorAll(".hideP")
+    for(let p of hideP){
+        p.classList.toggle("active")
+    }
+}
+
+let btnsShow = document.querySelectorAll(".btnShow")
+for(let btn of btnsShow){
+    btn.addEventListener("click", showItem)
+}
