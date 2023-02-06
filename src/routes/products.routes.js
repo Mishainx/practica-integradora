@@ -25,18 +25,30 @@ router.get("/", async (req, res) => {
       response = "El listado no cuenta con productos"
       res.status(200).send(response)
     }
-  
-
   } catch (err) {
     res.status(500).send(err.message);
   }
 });
 
 router.get("/:pid", async(req,res)=>{
+
   const id  = req.params.pid;
+
+  if(id.trim().length!=24){ 
+    res.status(400).send({error: "La Id de producto ingresada no es válida"})
+    return
+  }
+
+  const productExist = await productModel.findById(id)
+
+  if(productExist==null){
+    res.status(400).send({error:"No existe un producto con la Id ingresada"})
+    return
+  }
+
   try{
     const result = await productManager.getProductByID(id)
-    res.status(200).send(result)
+    res.status(200).send({status:"success",payload:result})
   }
   catch (err) {
     res.status(500).send(err.message);
@@ -69,6 +81,13 @@ router.post("/", async (req, res) => {
     return;
   }
 
+  const codeExist = await productModel.findOne({code:code})
+
+  if(codeExist){ 
+    res.status(400).send({error: "El código ingresado ya existe"})
+    return
+  }
+
   try {
     const response = await productManager.create({
       title,
@@ -88,6 +107,19 @@ router.post("/", async (req, res) => {
 
 router.delete("/:pid", async (req, res) => {
   const  id  = req.params.pid;
+
+  if(id.trim().length!=24){ 
+    res.status(400).send({error: "La Id de producto ingresada no es válida"})
+    return
+  }
+
+  const productExist = await productModel.findById(id)
+
+  if(productExist==null){
+    res.status(400).send({error:"No existe un producto con la Id ingresada"})
+    return
+  }
+
   try {
     const result = await productManager.delete(id);
 
@@ -100,6 +132,19 @@ router.delete("/:pid", async (req, res) => {
 router.put("/:pid", async (req, res) => {
   const { pid } = req.params;
   const property = req.body;
+
+  if(pid.trim().length!=24){ 
+    res.status(400).send({error: "La Id de producto ingresada no es válida"})
+    return
+  }
+
+  const productExist = await productModel.findById(pid)
+
+  if(productExist==null){
+    res.status(400).send({error:"No existe un producto con la Id ingresada"})
+    return
+  }
+
   try{
     const newProperty = await productManager.update(pid,property)
     const response = await productManager.getProductByID(pid)
