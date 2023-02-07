@@ -5,6 +5,7 @@ import { productModel } from "../data/models/products.model.js";
 const router = Router();
 const productManager = new ProductManager();
 
+// la ruta api/products devuelve el listado de productos existentes en MongoDB. Posee query limit configurado para acotar la muestra devuelta
 router.get("/", async (req, res) => {
   try {
     const readProducts = await productModel.find()
@@ -30,15 +31,19 @@ router.get("/", async (req, res) => {
   }
 });
 
+
+// la ruta api/products/:pid devuelve el producto que coincida con la Id solicitada.
 router.get("/:pid", async(req,res)=>{
 
   const id  = req.params.pid;
 
+  //Comprobación de la estructura de la Id
   if(id.trim().length!=24){ 
     res.status(400).send({error: "La Id de producto ingresada no es válida"})
     return
   }
 
+  //Comprobación de la existencia del producto
   const productExist = await productModel.findById(id)
 
   if(productExist==null){
@@ -46,6 +51,7 @@ router.get("/:pid", async(req,res)=>{
     return
   }
 
+  // Si la Id es válida y el producto existe se devuelve el producto solicitado
   try{
     const result = await productManager.getProductByID(id)
     res.status(200).send({status:"success",payload:result})
@@ -55,6 +61,7 @@ router.get("/:pid", async(req,res)=>{
   }
 })
 
+// api/products post recibe un producto y valida para agregarlo al listado de productos
 router.post("/", async (req, res) => {
   const {
     title,
@@ -81,6 +88,7 @@ router.post("/", async (req, res) => {
     return;
   }
 
+  // Comprobación del código de producto para evitar que se repita
   const codeExist = await productModel.findOne({code:code})
 
   if(codeExist){ 
@@ -105,14 +113,19 @@ router.post("/", async (req, res) => {
   }
 });
 
+
+// La ruta api/products/:pid (método delete) se encarga de eliminar un producto del listado.
 router.delete("/:pid", async (req, res) => {
   const  id  = req.params.pid;
 
+
+  //Comprobación de la estructura de la Id.
   if(id.trim().length!=24){ 
     res.status(400).send({error: "La Id de producto ingresada no es válida"})
     return
   }
 
+  //Comprobación de la existencia del producto.
   const productExist = await productModel.findById(id)
 
   if(productExist==null){
@@ -120,6 +133,7 @@ router.delete("/:pid", async (req, res) => {
     return
   }
 
+  //Si se comprueba la Id se ejecutan las acciones para eliminar el producto.
   try {
     const result = await productManager.delete(id);
 
@@ -129,15 +143,19 @@ router.delete("/:pid", async (req, res) => {
   }
 });
 
+
+// La ruta api/products/:pid (método put) se encarga de actualizar un producto  existente.
 router.put("/:pid", async (req, res) => {
   const { pid } = req.params;
   const property = req.body;
 
+  //Comprobación de la estructura de la Id.
   if(pid.trim().length!=24){ 
     res.status(400).send({error: "La Id de producto ingresada no es válida"})
     return
   }
 
+  //Comprobación de la existencia del producto.
   const productExist = await productModel.findById(pid)
 
   if(productExist==null){
@@ -145,6 +163,7 @@ router.put("/:pid", async (req, res) => {
     return
   }
 
+  //Si se comprueba la Id se ejecutan las acciones para actualizar el producto.
   try{
     const newProperty = await productManager.update(pid,property)
     const response = await productManager.getProductByID(pid)

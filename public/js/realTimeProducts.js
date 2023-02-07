@@ -19,10 +19,10 @@ let itemForm ={}
 let item;
 let findCodeResult;
 
-createItem()
-deleteProduct()
+createItem() // La función createItem se encarga de  tomar la información ingresada por el usuario y generar un nuevo producto
+deleteProduct() // La función createItem se encarga de  tomar la información ingresada por el usuario y eliminar un producto existentes
 
-socket.emit("realTimeConnection", "Cliente conectado a Real Time Products")
+socket.emit("realTimeConnection", "Cliente conectado a Real Time Products") // Aviso al servidor de que se conecto un usuario a la vista
 
 socket.on("findCodeResult", (data)=>{
     if(data==null){
@@ -37,7 +37,7 @@ socket.on("findCodeResult", (data)=>{
     else{
         invalidCode.innerHTML=""
         let invalidCodeMsg = document.createElement("p")
-        invalidCodeMsg.innerText = "El código ingresado ya se encuentra en el listado"
+        invalidCodeMsg.innerText = "* El código ingresado ya se encuentra en el listado"
         invalidCodeMsg.style.color="rgb(188, 36, 36)"
         invalidCode.append(invalidCodeMsg)
     }
@@ -47,7 +47,8 @@ function createItem(){
     addBtnForm.addEventListener("click",(Event)=>{
         Event.preventDefault()
         
-       const titleValidate = addTitleForm.value != ""
+        //Variables a validar
+        const titleValidate = addTitleForm.value != ""
         const descriptionValidate = addDescriptionForm.value != ""
         const priceValidate = addPriceForm.value > 0 
         const codeValidate = addCodeForm.value != "" 
@@ -57,7 +58,6 @@ function createItem(){
         
         if(titleValidate,descriptionValidate,priceValidate,stockValidate,codeValidate){
             socket.emit("findCode", addCodeForm.value)
-            
             item={
                 title: addTitleForm.value,
                 description: addDescriptionForm.value,
@@ -77,6 +77,7 @@ function createItem(){
 }}
 )}
 
+//Renderización de cambios en el sistema de forma dinámica
 socket.on("renderChanges",(data)=>{
     console.log(data)
     realTimeProducts.innerHTML = "<h2>Listado de Productos<h2>"
@@ -134,7 +135,7 @@ socket.on("renderChanges",(data)=>{
         })
 
 
-        //Función deleteProduct
+//Función deleteProduct
 function deleteProduct(){
     deleteIdBtn.addEventListener("click", function(Event){
         Event.preventDefault()
@@ -174,7 +175,7 @@ function deleteProduct(){
     }
 )}
 
-
+//Funciones necesarias para mostrar el producto completo al clickear en (ver completo)
 function showItem(e){
     let child = e.target
     let father = child.parentNode

@@ -1,6 +1,7 @@
 const socket = io();
 let chatBox = document.getElementById("chatBox");
 
+//Configuración de usuario para ingresar al Chat
 let user;
 Swal.fire({
   title: "Inicia sesión!",
@@ -20,6 +21,7 @@ Swal.fire({
   }
 });
 
+//Configuración de un event listener para capturar los mensajes enviados por el usuario
 chatBox.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
     if (chatBox.value.trim().length > 0) {
@@ -34,6 +36,7 @@ chatBox.addEventListener("keyup", (e) => {
   }
 });
 
+//Renderización del listado de mensajes
 socket.on("messageLogs",(data)=>{
   let log = document.getElementById("messageLogs")
   let messages = "";
@@ -43,6 +46,7 @@ socket.on("messageLogs",(data)=>{
   log.innerHTML =messages;
   })
 
+//Aviso de que se conectó un nuevo user al chat
 socket.on("new-user-connected", (data) => {
   if (data.id !== socket.id)
     Swal.fire({
@@ -52,6 +56,7 @@ socket.on("new-user-connected", (data) => {
     });
 });
 
+// La función firstLoad se encarga proporcionar al usuario que ingresa en forma posterior el listado de mensajes anterior de la conversación
 function firstLoad() {
   let log = document.getElementById("messageLogs");
 

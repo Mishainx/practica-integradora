@@ -11,11 +11,9 @@ import {messageModel } from "./data/models/messages.model.js";
 import { ProductManager } from "./data/classes/DBManager.js";
 import { productModel } from "./data/models/products.model.js";
 const classManager= new ProductManager
-
-
 const mensajes = []
 
-
+//Configuración dotenv
 dotenv.config();
 const app = express();
 const PORT = process.env.SERVER_PORT || 8181;
@@ -23,11 +21,13 @@ const DB_USER = process.env.DB_USER;
 const DB_PASS = process.env.DB_PASS;
 const DB_NAME = process.env.DB_NAME;
 
+//Configuración del servidor
 const httpServer = app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
   await messageModel.updateMany({},{status:false})
 });
 
+//Inicialización Socket server
 const socketServer = new Server(httpServer)
 
 //Middelware para trabajar con archivos .Json
@@ -48,6 +48,8 @@ app.post("/socketMessage", (req, res) => {
   res.send("ok");
 });
 
+
+//Configuración socket server
 socketServer.on("connection", (socket) => {
   socket.on("message", (data) => {
     mensajes.push(data);
@@ -81,8 +83,7 @@ socketServer.on("connection", (socket) => {
   })
 });
 
-
-
+//Configuración enviroment MongoDB
 const environment = async () => {
   try {
     await mongoose.connect(
@@ -109,7 +110,7 @@ app.use('/api/views', routerViews)
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 
-//Redirecciono a HomeHandlebars para  que no inicie en una página que no existe
+//Redireccionamiento a HomeHandlebars para  iniciar en Home en caso de que no exista la ruta
 app.get('*',(req,res)=>{
   res.status(301).redirect('/api/views/home')
 })

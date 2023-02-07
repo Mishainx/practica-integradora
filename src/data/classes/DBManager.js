@@ -1,6 +1,7 @@
 import cartModel from "../models/carts.model.js";
 import {productModel} from "../models/products.model.js";
 
+// Configuración CartManager
 class CartManager {
   async read() {
     try {
@@ -65,7 +66,7 @@ async deleteCartProduct(cartId,productId){
 }
 }
 
-
+// Configuración ProductManager
 class ProductManager {
   async read() {
     try {
