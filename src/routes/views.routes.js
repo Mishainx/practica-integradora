@@ -26,6 +26,18 @@ routerViews.get('/realTimeProducts', async (req,res)=>{
     }
 })
 
+// RouterViews.GET "Products" devuelve una vista  del listado de productos con paginación
+routerViews.get('/products', async (req,res)=>{
+    try{
+        const productsList = await productModel.paginate({},{lean:true,page:1,limit:10})
+        console.log(productsList)     
+        res.status(200).render('products',{styleSheets:'css/styles',productsList})
+    }
+    catch(err){
+        res.status(500).send({error:err})
+    }
+})
+
 // RouterViews.GET "Chat devuelve una vista  donde funciona el chat conectado a Mongo y socketserver
 routerViews.get("/chat",(req,res)=>{
     res.status(200).render('chat',{title:"Chat",styleSheets:'css/styles'})

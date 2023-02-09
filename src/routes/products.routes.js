@@ -8,25 +8,28 @@ const productManager = new ProductManager();
 // la ruta api/products devuelve el listado de productos existentes en MongoDB. Posee query limit configurado para acotar la muestra devuelta
 router.get("/", async (req, res) => {
   try {
-    const readProducts = await productModel.find()
-    const limit = req.query.limit
-    let response;
-    if(readProducts.length >0){
-      if(limit && !isNaN(Number(limit))){
-        let products = await productModel.find()
-        response = products.slice(0,limit)
-        res.status(200).send(response)
-      }
-    else{
-        response = readProducts
-        res.status(200).send(response)
-    }  
+    const limit = req.query.limit || 10
+    const page = req.query.page || 1
+    const query = req.query.query || ""
+    const sort = req.query.sort || ""
+
+    //Validación en caso de que se haya ingresado limit
+    if(isNaN(Number(limit))){
+      res.status(400).send({status:"error", payload:"El limit ingresado es inválido"})
+      return
     }
-    else{
-      response = "El listado no cuenta con productos"
-      res.status(200).send(response)
+    //Validación en caso de que se haya ingresado page
+    if(isNaN(Number(page))){
+      res.status(400).send({status:"error", payload:"El valor de page inválido"})
+      return
     }
-  } catch (err) {
+
+    let productlist= await productModel.paginate({},{limit:limit, page:page})
+    
+    res.status(200).send(response)
+  }
+
+  catch (err) {
     res.status(500).send(err.message);
   }
 });

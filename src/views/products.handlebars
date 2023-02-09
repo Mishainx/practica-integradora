@@ -1,0 +1,13 @@
+<div id="listProductsContainer" class="listProductsContainer">
+<div id="pageProducts">
+    {{#each productsList.docs}}
+    <p>{{this.title}}</p>
+    {{/each}}
+</div>
+<div>
+    <button>Previus page</button>
+    <input type="number" value={{productsList.pagingCounter}}>
+    <button><a href="./products?page={{productsList.nextPage}}" >Next Page</a></button>
+</div>
+    
+</div>
