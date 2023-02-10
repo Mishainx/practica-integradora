@@ -10,8 +10,10 @@ router.get("/", async (req, res) => {
   try {
     const limit = req.query.limit || 10
     const page = req.query.page || 1
-    const query = req.query.query || ""
+    const category = req.query.category || ""
+    //let stock = req.query.stock || undefined
     const sort = req.query.sort || ""
+    let stockQuery = req.query.stock || undefined
 
     //Validación en caso de que se haya ingresado limit
     if(isNaN(Number(limit))){
@@ -24,9 +26,36 @@ router.get("/", async (req, res) => {
       return
     }
 
-    let productlist= await productModel.paginate({},{limit:limit, page:page})
+    //Validación en caso de que se haya ingresado sort
+    if(sort != ""){
+      if(sort != 1 & sort !=-1){
+        res.status(400).send({status:'error',payload:'El valor de sort debe ser 1 o -1'})
+        return
+      }
+    }
+
+    //Validación en caso de que se haya ingresado query de categoría
+    if(category != ""){
+     const checkCategory = await productModel.exists({category:category})
+      if(!checkCategory){
+        res.status(400).send('No existe un categoría correlativa al valor ingresado')
+      }
+      }
+      
+    //Validación en caso de que se haya ingresado query de stock y configuración del query
+    if(stockQuery != undefined){
+      if(stockQuery != 0 & stockQuery !=1){
+        res.status(400).send({status:'error',payload:'El valor de stock es inválido. 0: sin stock / 1: stock disponible'})
+        return
+      }
+
+      stockQuery==1? stockQuery= {stock:{ $gte: 1 }}: stockQuery= {stock:{ $lt: 1 }}
+    }
+    console.log(stockQuery)
+    // Se realiza la paginación conforme los querys seleccionados
+    let productlist= await productModel.paginate({category:category, stockQuery},{limit:limit, page:page, sort: {price:sort}})
     
-    res.status(200).send(response)
+    res.status(200).send(productlist)
   }
 
   catch (err) {

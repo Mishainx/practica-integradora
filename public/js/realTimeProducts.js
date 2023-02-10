@@ -64,6 +64,7 @@ function createItem(){
                 price: addPriceForm.value,
                 stock: addStockForm.value,
                 code: addCodeForm.value,
+                category: addCategory.value,
                 thumbnail: [],
                 status: addStatusForm.value == "True"? true:false
             }       
