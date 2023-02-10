@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { response, Router, urlencoded } from "express";
 import { ProductManager } from "../data/classes/DBManager.js";
 import { productModel } from "../data/models/products.model.js";
 
@@ -10,8 +10,7 @@ router.get("/", async (req, res) => {
   try {
     const limit = req.query.limit || 10
     const page = req.query.page || 1
-    const category = req.query.category || ""
-    //let stock = req.query.stock || undefined
+    let category = req.query.category || undefined
     const sort = req.query.sort || ""
     let stockQuery = req.query.stock || undefined
 
@@ -34,28 +33,49 @@ router.get("/", async (req, res) => {
       }
     }
 
-    //Validación en caso de que se haya ingresado query de categoría
-    if(category != ""){
-     const checkCategory = await productModel.exists({category:category})
-      if(!checkCategory){
-        res.status(400).send('No existe un categoría correlativa al valor ingresado')
-      }
-      }
-      
-    //Validación en caso de que se haya ingresado query de stock y configuración del query
-    if(stockQuery != undefined){
-      if(stockQuery != 0 & stockQuery !=1){
-        res.status(400).send({status:'error',payload:'El valor de stock es inválido. 0: sin stock / 1: stock disponible'})
+    //Validación en caso de que se haya ingresado query por stock
+    if(stockQuery!=undefined){
+      if(stockQuery !=1 & stockQuery!=0){
+        res.status(400).send({status:"Error",payload:"El valor ingresado es incorrecto. Sin stock:0/ Con stock:1"})
         return
       }
-
-      stockQuery==1? stockQuery= {stock:{ $gte: 1 }}: stockQuery= {stock:{ $lt: 1 }}
+      stockQuery==1?stockQuery={stock:{$gte:1}}:stockQuery={stock:{$lt:1}}
     }
-    console.log(stockQuery)
+
+        //Validación en caso de que se haya ingresado query por categoría
+        if(category!=undefined){
+          const checkCategory = await productModel.exists({category:category})
+          if(!checkCategory){
+            res.status(400).send({status:"Error",payload:"La categoría ingresada es inexistente"})
+            return
+          }
+          category={category:category}
+        }
+
     // Se realiza la paginación conforme los querys seleccionados
-    let productlist= await productModel.paginate({category:category, stockQuery},{limit:limit, page:page, sort: {price:sort}})
+    let productlist= await productModel.paginate({...category,...stockQuery},{limit:limit, page:page, sort: {price:sort}})
+    let actualUrl = new URLSearchParams(req.originalUrl)
+    actualUrl.set('page','3')
+    actualUrl= actualUrl.toString().replace('%2F','/').replace('%2F','/').replace('%3F','/')
+    console.log(actualUrl)
+
+
     
-    res.status(200).send(productlist)
+    //Estructuración de la respuesta del servidor
+    let response ={
+      status:"succes",
+      payload:productlist.docs,
+      totalPages:productlist.totalPages,
+      prevPage:productlist.prevPage,
+      nextPage:productlist.nextPage,
+      page:productlist.page,
+      hasPrevPage:productlist.hasPrevPage,
+      hasNextPage:productlist.hasNextPage,
+      prevLink:  actualUrl || false,
+      nextLink:productlist.nextLink || false
+    }
+    //Envío la respuesta
+    res.status(200).send(response)
   }
 
   catch (err) {
