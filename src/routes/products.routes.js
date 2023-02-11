@@ -54,13 +54,28 @@ router.get("/", async (req, res) => {
 
     // Se realiza la paginación conforme los querys seleccionados
     let productlist= await productModel.paginate({...category,...stockQuery},{limit:limit, page:page, sort: {price:sort}})
-    let actualUrl = new URLSearchParams(req.originalUrl)
-    actualUrl.set('page','3')
-    actualUrl= actualUrl.toString().replace('%2F','/').replace('%2F','/').replace('%3F','/')
-    console.log(actualUrl)
-
-
     
+    //Configuración prevLink
+    let prevLink;
+    let nextLink;
+    if(productlist.hasPrevPage != false ){
+      let actualUrl = new URLSearchParams(req.originalUrl)
+      actualUrl.set('page',`${parseInt(productlist.page) - 1}` )
+      prevLink= actualUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?')
+    }
+    else{
+     prevLink = false
+    }
+
+    //Configuración nextLink
+    if(productlist.hasNextPage != false ){
+      let actualUrl = new URLSearchParams(req.originalUrl)
+      actualUrl.set("page", productlist.page+1 )
+      nextLink = actualUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
+    }
+    else{
+     nextLink = false
+    }
     //Estructuración de la respuesta del servidor
     let response ={
       status:"succes",
@@ -71,8 +86,8 @@ router.get("/", async (req, res) => {
       page:productlist.page,
       hasPrevPage:productlist.hasPrevPage,
       hasNextPage:productlist.hasNextPage,
-      prevLink:  actualUrl || false,
-      nextLink:productlist.nextLink || false
+      prevLink:  prevLink,
+      nextLink: nextLink
     }
     //Envío la respuesta
     res.status(200).send(response)

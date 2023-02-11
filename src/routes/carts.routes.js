@@ -1,10 +1,11 @@
-import { response, Router } from "express";
+import { Router } from "express";
 import { CartManager } from "../data/classes/DBManager.js";
 import cartModel from "../data/models/carts.model.js";
 import { productModel } from "../data/models/products.model.js";
 
 const router = Router();
 const cartManager = new CartManager();
+let response;
 
 //Configuración de las routes del Cart
 
@@ -55,7 +56,6 @@ router.get("/:cid", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const response = await cartManager.create();
-    console.log(response);
     res.status(200).send({ message: "Carrito creado", response });
   } catch (err) {
     res.status(500).send(err.message);
@@ -81,8 +81,12 @@ router.delete("/:id", async (req, res) => {
     }
 
     //Si se comprueba la validez del parámetro se ejecutan las acciones para eliminar el carrito.
-    const response = await cartManager.delete(id);
-    res.status(200).send({ message: "Carrito eliminado", response });
+    let productsInCart = await cartModel.findById(id)
+    productsInCart.products = []
+    productsInCart.save()
+    response = productsInCart
+
+    res.status(200).send({ status: "succes", message: 'Productos del carrito eliminados exitósamente', payload: response});
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -160,5 +164,79 @@ router.delete("/:cid/products/:pid", async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
+//La ruta api/carts/:cid/products/:pid (método put) actualiza el carrito con un array.
+router.put("/:cid",async(req,res)=>{
+  const  cartId  = req.params.cid;
+  const productId = req.params.pid
+  const newArray = req.body
+
+  try {
+  //Comprobación de la estructura y validez de la Id del carrito recibida por parámetro
+  if(cartId.trim().length!=24){
+    res.status(400).send({error: "La Id del Cart ingresada no es válida"})
+    return
+  }
+  const cartExist = await cartModel.findById(cartId)
+
+  if(cartExist==null){
+    res.status(400).send({error:"No existe un Cart con la Id ingresada"})
+    return
+  }
+
+  //Si se comprueba la validez de los parámetros se ejecutan las acciones para actualizar el carrito
+  let productlist = await cartModel.findById(cartId)
+  productlist.products = []
+  productlist.products = newArray
+  response = productlist
+  await cartModel.findByIdAndUpdate(cartId, productlist)
+  res.status(200).send({status:'success', message:'El carrito se ha actualizado exitósamente', payload:response})
+  }
+  catch(err){
+    res.status(500).send(err.message);
+  }
+})
+
+//La ruta api/carts/:cid/products/:pid (método put) actualiza la cantidad de ejemplares de un producto por parámetro
+router.put("/:cid/products/:pid",async(req,res)=>{
+  const  cartId  = req.params.cid;
+  const productId = req.params.pid
+  const newQuantity = req.body
+
+  try {
+  //Comprobación de la estructura y validez de la Id de producto y la Id del carrito recibidos por parámetro
+    if(productId.trim().length!=24){ 
+    res.status(400).send({error: "La Id de producto ingresada no es válida"})
+    return
+  }
+  else if(cartId.trim().length!=24){
+    res.status(400).send({error: "La Id del Cart ingresada no es válida"})
+    return
+  }
+  const productExist = await productModel.findById(productId)
+  const cartExist = await cartModel.findById(cartId)
+
+  if(productExist==null){
+    res.status(400).send({error:"No existe un producto con la Id ingresada"})
+    return
+  }
+ else if(cartExist==null){
+    res.status(400).send({error:"No existe un Cart con la Id ingresada"})
+    return
+  }
+
+  //Si se comprueba la validez de los parámetros se ejecutan las acciones para actualizar product quantity
+  let productlist = await cartModel.findById(cartId)
+  let productFind = productlist.products.findIndex((product)=>product.id == productId)
+  productlist.products[productFind].quantity = newQuantity.quantity
+  await cartModel.findByIdAndUpdate(cartId, productlist)
+  response = productlist
+  res.status(200).send({status:'success', message:'El producto se ha actualizado exitósamente', payload:response})
+  }
+  catch(err){
+    res.status(500).send(err.message);
+  }
+})
+
 
 export default router;

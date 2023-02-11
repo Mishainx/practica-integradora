@@ -29,7 +29,7 @@ routerViews.get('/realTimeProducts', async (req,res)=>{
 // RouterViews.GET "Products" devuelve una vista  del listado de productos con paginación
 routerViews.get('/products', async (req,res)=>{
     try{
-        const productsList = await productModel.paginate({},{lean:true,page:1,limit:10})
+        const productsList = await productModel.paginate({},{lean:true,page:1,limit:3})
         console.log(productsList)     
         res.status(200).render('products',{styleSheets:'css/styles',productsList})
     }
