@@ -39,7 +39,7 @@ router.get("/:cid", async (req, res) => {
     }
 
     //Si se comprueba el parámetro se ejecutan las acciones para devolver el carrito solicitado.
-    const findCart = cart.find((cart)=>cart.id == cartId)
+    const findCart = await cartModel.findOne({_id:'63e7eb7b4ca25f790d590984'}).populate('products.product')
     if(findCart !=undefined){
     res.status(200).send(findCart)
     return findCart
@@ -122,8 +122,22 @@ router.post("/:cid/products/:pid", async (req, res) => {
 
   //Si se comprueba la validez de los parámetros se ejecutan las acciones para agregar el producto al carrito
   try {
-    const response = await cartManager.update(cartId, productId,quantity);
-    res.status(200).send({ message: "Producto agregado al carrito", response });
+    let selectedCart = await cartModel.find({_id: cartId})
+    let productExistInCart = selectedCart[0].products.find((product)=>product.product == productId)
+
+    if(productExistInCart == undefined){
+      selectedCart[0].products.push({product: productId, quantity: quantity})
+    }
+    else{
+      let newQuantity = productExistInCart.quantity + quantity
+      let productIndex = selectedCart[0].products.findIndex((product)=> product.product == productId)
+      selectedCart[0].products[productIndex].quantity = newQuantity
+    }
+
+    let result = await cartModel.updateOne({_id:cartId,},selectedCart[0])
+
+
+    res.status(200).send({ message: "Producto agregado al carrito", selectedCart });
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -145,6 +159,8 @@ router.delete("/:cid/products/:pid", async (req, res) => {
     res.status(400).send({error: "La Id del Cart ingresada no es válida"})
     return
   }
+
+
   const productExist = await productModel.findById(productId)
   const cartExist = await cartModel.findById(cartId)
 
@@ -154,6 +170,13 @@ router.delete("/:cid/products/:pid", async (req, res) => {
   }
  else if(cartExist==null){
     res.status(400).send({error:"No existe un Cart con la Id ingresada"})
+    return
+  }
+
+    // Comprobación de que el producto exista en el carrito
+    let productExistInCart = cartExist.products.find((product)=>product.product == productId)
+    if(productExistInCart == undefined){
+    res.status(400).send({error:"No existe un producto en el carrito con la Id ingresada"})
     return
   }
 
@@ -225,12 +248,20 @@ router.put("/:cid/products/:pid",async(req,res)=>{
     return
   }
 
+  // Comprobación de que el producto exista en el carrito
+  let productExistInCart = cartExist.products.find((product)=>product.product == productId)
+  if(productExistInCart == undefined){
+  res.status(400).send({error:"No existe un producto en el carrito con la Id ingresada"})
+  return
+}
+
+
   //Si se comprueba la validez de los parámetros se ejecutan las acciones para actualizar product quantity
-  let productlist = await cartModel.findById(cartId)
-  let productFind = productlist.products.findIndex((product)=>product.id == productId)
-  productlist.products[productFind].quantity = newQuantity.quantity
-  await cartModel.findByIdAndUpdate(cartId, productlist)
-  response = productlist
+  let productFindIndex = cartExist.products.findIndex((product)=>product.product == productId)
+  cartExist.products[productFindIndex].quantity = newQuantity.quantity  
+  await cartModel.updateOne({_id: cartId},cartExist)
+
+  response = cartExist
   res.status(200).send({status:'success', message:'El producto se ha actualizado exitósamente', payload:response})
   }
   catch(err){
