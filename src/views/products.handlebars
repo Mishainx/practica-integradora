@@ -1,6 +1,6 @@
 <div id="listProductsContainer" class="listProductsContainer">
+  {{#each productlist.docs}}
 <div id="pageProducts">
-    {{#each productsList.docs}}
     <p>Nombre: {{this.title}}</p>
     <p id="productViewId">Id: {{this.id}}</p>
     <p>Id: {{this.description}}</p>
@@ -9,12 +9,13 @@
     <p>code: {{this.code}}</p>
     <input id="productQuantity" type="number" placeholder="Indique cantidad solicitada">
     <button id="productQuantityButton">Enviar</button>
-    {{/each}}
 </div>
+    {{/each}}
+
 <div>
     <button>Previus page</button>
-    <input type="number" value={{productsList.pagingCounter}}>
-    <button><a href="./products?page={{productsList.nextPage}}" >Next Page</a></button>
+    <input type="number" value={{productList.pagingCounter}}>
+    <button><a href="./products?page={{productList.nextPage}}" >Next Page</a></button>
 </div>
     
 </div>
