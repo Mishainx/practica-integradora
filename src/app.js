@@ -8,8 +8,9 @@ import { engine } from "express-handlebars";
 import routerViews from "./routes/views.routes.js";
 import messageRoute from "./routes/messages.routes.js";
 import {messageModel } from "./data/models/messages.model.js";
-import { ProductManager } from "./data/classes/DBManager.js";
+import { CartManager, ProductManager } from "./data/classes/DBManager.js";
 import { productModel } from "./data/models/products.model.js";
+import cartModel from "./data/models/carts.model.js";
 const classManager= new ProductManager
 const mensajes = []
 
@@ -51,6 +52,7 @@ app.post("/socketMessage", (req, res) => {
 
 //Configuración socket server
 socketServer.on("connection", (socket) => {
+
   socket.on("message", (data) => {
     mensajes.push(data);
     socketServer.emit("messageLogs", mensajes);
@@ -81,6 +83,10 @@ socketServer.on("connection", (socket) => {
     await classManager.delete(data)
     socket.emit("renderChanges",await productModel.find())
   })
+
+    socket.on("sendQuantity",(data)=>{
+      
+    })
 });
 
 //Configuración enviroment MongoDB

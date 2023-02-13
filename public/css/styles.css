@@ -117,3 +117,34 @@ main{
     display: flex;
     flex-direction: column
 }
+
+.cartContainer{
+    box-shadow: rgba(255, 252, 252, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
+    padding: 10px;
+}
+
+.cartContainer h3{
+    margin: 10px;
+    background-color: white;
+    color: #000000;
+}
+
+.itemContainer{
+    box-shadow: rgba(255, 252, 252, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.noProductsCart{
+    text-align: center;
+}
+
+.cartSearchContainer{
+    width: 300px;
+}
+
+.cartErrorContainer{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}

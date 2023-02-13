@@ -1,7 +1,14 @@
 <div id="listProductsContainer" class="listProductsContainer">
 <div id="pageProducts">
     {{#each productsList.docs}}
-    <p>{{this.title}}</p>
+    <p>Nombre: {{this.title}}</p>
+    <p id="productViewId">Id: {{this.id}}</p>
+    <p>Id: {{this.description}}</p>
+    <p>Precio {{this.price}}</p>
+    <p>Stock: {{this.stock}}</p>
+    <p>code: {{this.code}}</p>
+    <input id="productQuantity" type="number" placeholder="Indique cantidad solicitada">
+    <button id="productQuantityButton">Enviar</button>
     {{/each}}
 </div>
 <div>
@@ -11,3 +18,6 @@
 </div>
     
 </div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/products.js"></script>
