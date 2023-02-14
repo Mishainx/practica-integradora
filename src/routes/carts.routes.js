@@ -210,7 +210,8 @@ router.put("/:cid",async(req,res)=>{
 
   //Si se comprueba la validez de los parámetros se ejecutan las acciones para actualizar el carrito
   await cartModel.findByIdAndUpdate({_id:cartId},{products:newArray.products})
-  res.status(200).send({status:'success', message:'El carrito se ha actualizado exitósamente', payload:"lala"})
+  let response = await cartModel.findById(cartId)
+  res.status(200).send({status:'success', message:'El carrito se ha actualizado exitósamente', payload:response})
   }
   catch(err){
     res.status(500).send(err.message);
