@@ -1,6 +1,6 @@
-
-
 <div id="listProductsContainer" class="listProductsContainer">
+    <div id="messageDiv"></div>
+
     {{#if message}}
     <h3 style="text-align: center;">{{message}}</h3>
 
@@ -13,11 +13,12 @@
             <p>Description: {{this.description}}</p>
             <p>Price: {{this.price}}</p>
             <p>Stock: {{this.stock}}</p>
+            <p>Code: {{this.code}}</p>
+
             <div>
-                <input type="number" class="productQuantity">
+                <input type="number" class="productQuantity" min="1" value="1">
                 <button class="productQuantityButton">Agregar al carrito</button>
             </div>
-
 
         </div>
         {{/each}}

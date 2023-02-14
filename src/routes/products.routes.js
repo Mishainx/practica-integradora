@@ -178,7 +178,7 @@ router.post("/", async (req, res) => {
     !code ||
     !price ||
     !thumbnail ||
-    !stock ||
+    //!stock
     !category ||
     !status
   ) {
@@ -261,7 +261,7 @@ router.put("/:pid", async (req, res) => {
 
   //Si se comprueba la Id se ejecutan las acciones para actualizar el producto.
   try{
-    const newProperty = await productManager.update(pid,property)
+    let newProperty = await productModel.findByIdAndUpdate(pid,property)
     const response = await productManager.getProductByID(pid)
     res.status(200).send({message:"Producto actualizado exitósamente", response})
   }

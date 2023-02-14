@@ -3,12 +3,15 @@ const routerViews = Router();
 const messages = []
 import {productModel} from "../data/models/products.model.js"
 import cartModel from "../data/models/carts.model.js"
+import { assignedCart } from "../app.js";
+
 
 // RouterViews.get "Home" devuelve una vista  del listado de productos sin socket server
 routerViews.get('/home', async (req,res)=>{
     try{
+        let cartDirection = await assignedCart._id
         const productsList = await productModel.find().lean()
-        res.status(200).render('home',{styleSheets:'css/styles',productsList})
+        res.status(200).render('home',{styleSheets:'css/styles',productsList, cartDirection})
     }
     catch(err){
         res.status(500).send({error:err})
@@ -18,8 +21,9 @@ routerViews.get('/home', async (req,res)=>{
 // RouterViews.GET "Real Time Products" devuelve una vista  del listado de productos que actualiza cambios en vivo con socket server
 routerViews.get('/realTimeProducts', async (req,res)=>{
     try{
+      let cartDirection = await assignedCart._id
         const productsList = await productModel.find().lean()
-        res.status(200).render('realTimeProducts',{styleSheets:'css/styles',productsList})
+        res.status(200).render('realTimeProducts',{styleSheets:'css/styles',productsList, cartDirection})
     }
     catch(err){
         res.status(500).send({error:err})
@@ -29,6 +33,7 @@ routerViews.get('/realTimeProducts', async (req,res)=>{
 // RouterViews.GET "Products" devuelve una vista  del listado de productos con paginación
 routerViews.get('/products', async (req,res)=>{
     try{
+      let cartDirection = await assignedCart._id
         const limit = req.query.limit || 10
         const page = req.query.page || 1
         let category = req.query.category || undefined
@@ -125,14 +130,13 @@ routerViews.get('/products', async (req,res)=>{
           productList.prevLink = prevLink
         }
 
-        console.log(productList )
         if(page < 1 || page> parseInt(productList.totalPages)){
           message = "La página ingresada no es válida"
           res.status(300).render('products',{styleSheets:'css/styles', message})
           return
         }
 
-        res.status(200).render('products',{styleSheets:'css/styles', productList})
+        res.status(200).render('products',{styleSheets:'css/styles', productList,cartDirection})
     }
     catch(err){
         res.status(500).send({error:err})
@@ -141,10 +145,12 @@ routerViews.get('/products', async (req,res)=>{
 
 // RouterViews.GET "Chat devuelve una vista  donde funciona el chat conectado a Mongo y socketserver
 routerViews.get("/chat",async(req,res)=>{
-    res.status(200).render('chat',{title:"Chat",styleSheets:'css/styles'})
+  let cartDirection = await assignedCart._id
+  res.status(200).render('chat',{title:"Chat",styleSheets:'css/styles',cartDirection})
 })
 
 routerViews.get("/carts/:cid",async (req,res)=>{
+  let cartDirection = await assignedCart._id
     const cartId = req.params.cid
     let cart;
 
@@ -166,7 +172,7 @@ routerViews.get("/carts/:cid",async (req,res)=>{
         cart = cartExist
       }
 
-    res.status(200).render('carts_Id',{title:"Cart Id",styleSheets:'css/styles', cart})
+    res.status(200).render('carts_Id',{title:"Cart Id",styleSheets:'css/styles', cart, cartDirection})
 })
 
 routerViews.get('/carts',async (req,res)=>{

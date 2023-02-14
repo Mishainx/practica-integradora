@@ -4,12 +4,15 @@
     <div>
     {{#each cart.products}}
     <div class="= itemContainer">
-        <p>Id del producto: {{this.product._id}}</p>
+        <div>
+        <div><p>Id del producto: </p><p>{{this.product._id}}</p></div>
         <p>Id del producto: {{this.product.description}}</p>
         <p>Nombre del producto: {{this.product.title}}</p>
         <p>Precio del producto: {{this.product.price}}</p>
         <p >Cantidad: {{this.quantity}}</p>
-    </div>
+        </div   >
+        <i class="fa-solid fa-trash btnTrash"></i>
+        </div>
 
     {{else}}
     <div class="noProductsCart">

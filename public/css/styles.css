@@ -136,6 +136,10 @@ main{
     box-shadow: rgba(255, 252, 252, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
     padding: 10px;
     margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px
 }
 
 .noProductsCart{
@@ -196,4 +200,11 @@ main{
 .itemProductId{
     display: flex;
     gap: 5px;
+}
+
+header{
+    display: flex;
+    height: 50px;
+    justify-content: center;  
+    align-items: center;
 }

@@ -13,8 +13,11 @@ import { productModel } from "./data/models/products.model.js";
 import cartModel from "./data/models/carts.model.js";
 const classManager= new ProductManager
 const cartManager = new CartManager();
-let assignedCart;
+export let assignedCart;
 const mensajes = []
+import { __dirname } from '../utils.js';
+
+
 
 //Configuración dotenv
 dotenv.config();
@@ -42,8 +45,8 @@ app.use(express.urlencoded({ extended: true }));
 //Handlebars
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
-app.set('views', "./src/views")
-app.use(express.static('public'));
+app.set('views', __dirname+"/src/views")
+app.use(express.static(__dirname +'/public'));
 
 app.post("/socketMessage", (req, res) => {
   const { message } = req.body;
@@ -61,10 +64,6 @@ socketServer.on("connection", async(socket) => {
     socketServer.emit("messageLogs", mensajes);
     messageModel.create({name:data.user,message:data.message,status:true})  
   });
-
-  socket.on("realTimeConnection",(data)=>{
-    console.log(data)
-  })
    
   socket.on("findCode",async(data)=>{
   socket.emit("findCodeResult", await classManager.findCode(data))
@@ -85,12 +84,19 @@ socketServer.on("connection", async(socket) => {
     socket.emit("renderChanges",await productModel.find())
   })
 
-
    socket.on("sendItem",async (data)=>{
       try{
         let selectedCart = await cartModel.find({_id: assignedCart._id})
         let productExistInCart = selectedCart[0].products.find((product)=>product.product == data.id)
-
+        let checkStock = await productModel.findById(data.id)
+        let father = data.father
+        
+        if(parseInt(data.quantity)>checkStock.stock){
+          let message = "La cantidad solicitada es mayor que el stock disponible"
+          socket.emit("stockError",{error:message, checkStock})
+          return
+        }
+        
         if(productExistInCart == undefined){
           selectedCart[0].products.push({product: data.id, quantity: parseInt(data.quantity)})
         }
@@ -101,14 +107,17 @@ socketServer.on("connection", async(socket) => {
         }
     
         let result = await cartModel.updateOne({_id:assignedCart._id},selectedCart[0])
-
+        socket.emit("addSuccess",{status:"succes", result})
       }
       catch (err) {
         throw err;
       }
-      
     })
-});
+
+    socket.on("deleteItemCart",async(data)=>{
+      console.log( "hola")
+    })
+  });
 
 //Configuración enviroment MongoDB
 const environment = async () => {

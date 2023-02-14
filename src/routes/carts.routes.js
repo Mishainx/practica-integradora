@@ -39,7 +39,7 @@ router.get("/:cid", async (req, res) => {
     }
 
     //Si se comprueba el parámetro se ejecutan las acciones para devolver el carrito solicitado.
-    const findCart = await cartModel.findOne({_id:'63e7eb7b4ca25f790d590984'}).populate('products.product')
+    const findCart = await cartModel.findOne({_id:cartId}).populate('products.product')
     if(findCart !=undefined){
     res.status(200).send(findCart)
     return findCart
@@ -191,8 +191,9 @@ router.delete("/:cid/products/:pid", async (req, res) => {
 //La ruta api/carts/:cid/products/:pid (método put) actualiza el carrito con un array.
 router.put("/:cid",async(req,res)=>{
   const  cartId  = req.params.cid;
-  const productId = req.params.pid
-  const newArray = req.body
+  let newArray = await req.body
+  console.log(newArray.products)
+  
 
   try {
   //Comprobación de la estructura y validez de la Id del carrito recibida por parámetro
@@ -208,12 +209,8 @@ router.put("/:cid",async(req,res)=>{
   }
 
   //Si se comprueba la validez de los parámetros se ejecutan las acciones para actualizar el carrito
-  let productlist = await cartModel.findById(cartId)
-  productlist.products = []
-  productlist.products = newArray
-  response = productlist
-  await cartModel.findByIdAndUpdate(cartId, productlist)
-  res.status(200).send({status:'success', message:'El carrito se ha actualizado exitósamente', payload:response})
+  await cartModel.findByIdAndUpdate({_id:cartId},{products:newArray.products})
+  res.status(200).send({status:'success', message:'El carrito se ha actualizado exitósamente', payload:"lala"})
   }
   catch(err){
     res.status(500).send(err.message);

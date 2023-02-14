@@ -120,6 +120,7 @@ class ProductManager {
   async update(productId, productProperty) {
     try {
       const newProductProperty = await productModel.findOneAndUpdate(productId,productProperty)
+      console.log(newProductProperty)
       newProductProperty.save()
       const newProduct = this.getProductByID(productId)
       return newProduct
