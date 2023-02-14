@@ -70,19 +70,25 @@ router.get("/", async (req, res) => {
         nextLink = actualUrl.toString().replace("%2Fapi%2Fproducts=", "/api/products?page=")
       }
 
-      if(actualUrlParams.has("/api/products?page")){
+      else if(actualUrlParams.has("/api/products?page")){
         let newPage = actualUrlParams.get("/api/products?page")
         let newUrl = new URLSearchParams(req.originalUrl)
         newUrl.set('/api/products?page',parseInt(...newPage)+1)
         nextLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
       }
 
-      if(actualUrlParams.has("page")){
+      else if(actualUrlParams.has("page")){
         let newPage = actualUrlParams.get("page")
         let newUrl = new URLSearchParams(req.originalUrl)
         newUrl.set('page',parseInt(...newPage)+1)
   
       nextLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
+      }
+      
+      else{
+        let newUrl = new URLSearchParams(req.originalUrl)
+        newUrl.set('page',2)
+         nextLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?')
       }
   }
 
