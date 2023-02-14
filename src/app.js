@@ -92,7 +92,7 @@ socketServer.on("connection", async(socket) => {
         let productExistInCart = selectedCart[0].products.find((product)=>product.product == data.id)
 
         if(productExistInCart == undefined){
-          selectedCart[0].products.push({product: data.id, quantity: data.quantity})
+          selectedCart[0].products.push({product: data.id, quantity: parseInt(data.quantity)})
         }
         else{
           let newQuantity = productExistInCart.quantity + parseInt(data.quantity)
