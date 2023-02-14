@@ -32,7 +32,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/products/63e0ef3a9401a6cfc5a1fbc6",
+					"raw": "http://localhost:8080/api/products/63ebfdd3104d86e2c372f225",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -41,7 +41,7 @@
 					"path": [
 						"api",
 						"products",
-						"63e0ef3a9401a6cfc5a1fbc6"
+						"63ebfdd3104d86e2c372f225"
 					]
 				}
 			},
@@ -83,7 +83,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"stock\":200}",
+					"raw": "{\"stock\":50}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -91,7 +91,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/products/63e0ef3a9401a6cfc5a1fbc6",
+					"raw": "http://localhost:8080/api/products/63ebfd40104d86e2c372f215",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -100,7 +100,7 @@
 					"path": [
 						"api",
 						"products",
-						"63e0ef3a9401a6cfc5a1fbc6"
+						"63ebfd40104d86e2c372f215"
 					]
 				}
 			},
@@ -153,7 +153,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/carts/63ddb387c3fb6ee84e782ba8",
+					"raw": "http://localhost:8080/api/carts/63ec04bd558dfcd8d95282ff",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -162,7 +162,7 @@
 					"path": [
 						"api",
 						"carts",
-						"63ddb387c3fb6ee84e782ba8"
+						"63ec04bd558dfcd8d95282ff"
 					]
 				}
 			},
@@ -212,6 +212,82 @@
 					}
 				},
 				"url": {
+					"raw": "http://localhost:8080/api/carts/63e7eb7b4ca25f790d590984/products/63e625ada9a9d4277ce28e7b",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"carts",
+						"63e7eb7b4ca25f790d590984",
+						"products",
+						"63e625ada9a9d4277ce28e7b"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "carts/:cid",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/carts/63e2fa8421c44a250d9ab774",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"carts",
+						"63e2fa8421c44a250d9ab774"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "carts/:cid/products/:pid",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/carts/63e7eb7b4ca25f790d590984/products/63e543c610eaa746d5ce804e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"carts",
+						"63e7eb7b4ca25f790d590984",
+						"products",
+						"63e543c610eaa746d5ce804e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "carts/:cid/products/:pid",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"quantity\": 500\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
 					"raw": "http://localhost:8080/api/carts/63ddb387c3fb6ee84e782ba8/products/63e0ef3a9401a6cfc5a1fbc6",
 					"protocol": "http",
 					"host": [
@@ -232,10 +308,19 @@
 		{
 			"name": "carts/:cid",
 			"request": {
-				"method": "DELETE",
+				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"products\": [\r\n        {\r\n            \"product\": \"63ebfd7b104d86e2c372f21b\",\r\n            \"quantity\": 25\r\n        },\r\n        {\r\n            \"product\": \"63ebfd52104d86e2c372f218\",\r\n            \"quantity\": 1500\r\n        }\r\n    ]\r\n}\r\n    \r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/api/carts/63e164b855c3041d6d45a0d6",
+					"raw": "http://localhost:8080/api/carts/63ec04bd558dfcd8d95282ff",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -244,30 +329,7 @@
 					"path": [
 						"api",
 						"carts",
-						"63e164b855c3041d6d45a0d6"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "carts/:cid/products/:pid",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/carts/63ddb387c3fb6ee84e782ba8/products/63e0ef3a9401a6cfc5a1fbc6",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"carts",
-						"63ddb387c3fb6ee84e782ba8",
-						"products",
-						"63e0ef3a9401a6cfc5a1fbc6"
+						"63ec04bd558dfcd8d95282ff"
 					]
 				}
 			},
