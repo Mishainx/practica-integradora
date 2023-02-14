@@ -40,6 +40,7 @@ routerViews.get('/products', async (req,res)=>{
         const sort = req.query.sort || ""
         let stockQuery = req.query.stock || undefined
         let message;
+        let pageCounter = 0
     
         //Validación en caso de que se haya ingresado limit
         if(isNaN(Number(limit))){
@@ -94,7 +95,7 @@ routerViews.get('/products', async (req,res)=>{
           productList.nextLink = nextLink
         }
 
-        if(actualUrlParams.has("/api/views/products?page")){
+        else if(actualUrlParams.has("/api/views/products?page")){
           let newPage = actualUrlParams.get("/api/views/products?page")
           let newUrl = new URLSearchParams(req.originalUrl)
           newUrl.set('/api/views/products?page',parseInt(...newPage)+1)
@@ -103,7 +104,7 @@ routerViews.get('/products', async (req,res)=>{
           productList.nextLink = nextLink
         }
 
-        if(actualUrlParams.has("page")){
+        else if(actualUrlParams.has("page")){
           let newPage = actualUrlParams.get("page")
           let newUrl = new URLSearchParams(req.originalUrl)
           newUrl.set('page',parseInt(...newPage)+1)
@@ -111,6 +112,14 @@ routerViews.get('/products', async (req,res)=>{
           let nextLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
           productList.nextLink = nextLink
         }
+
+        else{
+          let newUrl = new URLSearchParams(req.originalUrl)
+          newUrl.set('page',2)
+          let nextLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?')
+          productList.nextLink = nextLink
+        }
+
 
         //Configuración prevLink
         if(actualUrlParams.has("/api/views/products?page")){
