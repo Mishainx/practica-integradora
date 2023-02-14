@@ -1,17 +1,25 @@
 const socket=io();
 
-const productQuantity = document.getElementById('productQuantity')
-const productQuantityButton = document.getElementById('productQuantityButton')
-const productViewId = document.getElementById("productViewId")
-const prevPageButton = document.getElementById("prevPageButton")
-const nextPageButton = document.getElementById("nextPageButton")
+let buttonsQuantity = document.querySelectorAll(".productQuantityButton")
 
 //Configuración para agregar el producto al carrito
-productQuantityButton.addEventListener("click", async()=>{
-    let item={
-        id: productViewId.innerText,
-        quantity:productQuantity.value,
+
+for(let btn of buttonsQuantity){
+
+    btn.addEventListener("click", addItem)
+
+    function addItem(Event){
+        let child = Event.target
+        let father = child.parentNode
+        let grand = father.parentNode
+        let selectedProductId = grand.childNodes[1].childNodes[1].innerText
+        console.log(selectedProductId)
+
+        let item ={
+            id: selectedProductId    ,
+            quantity: father.querySelector("input").value
+        }
+        socket.emit("sendItem", item)
+
+        }   
     }
-    socket.emit("sendQuantity", item)
-    console.log(item)
-})

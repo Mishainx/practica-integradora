@@ -12,6 +12,8 @@ import { CartManager, ProductManager } from "./data/classes/DBManager.js";
 import { productModel } from "./data/models/products.model.js";
 import cartModel from "./data/models/carts.model.js";
 const classManager= new ProductManager
+const cartManager = new CartManager();
+let assignedCart;
 const mensajes = []
 
 //Configuración dotenv
@@ -26,6 +28,7 @@ const DB_NAME = process.env.DB_NAME;
 const httpServer = app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
   await messageModel.updateMany({},{status:false})
+  assignedCart = await cartManager.create()
 });
 
 //Inicialización Socket server
@@ -51,7 +54,7 @@ app.post("/socketMessage", (req, res) => {
 
 
 //Configuración socket server
-socketServer.on("connection", (socket) => {
+socketServer.on("connection", async(socket) => {
 
   socket.on("message", (data) => {
     mensajes.push(data);
@@ -74,7 +77,6 @@ socketServer.on("connection", (socket) => {
 
   socket.on("findId",async (data)=>{
   const productExist = await productModel.findById(data)
-  console.log(productExist)
   socket.emit("resultFindId", productExist)
   })
 
@@ -83,8 +85,28 @@ socketServer.on("connection", (socket) => {
     socket.emit("renderChanges",await productModel.find())
   })
 
-    socket.on("sendQuantity",async (data)=>{
-      await cartModel.create()
+
+   socket.on("sendItem",async (data)=>{
+      try{
+        let selectedCart = await cartModel.find({_id: assignedCart._id})
+        let productExistInCart = selectedCart[0].products.find((product)=>product.product == data.id)
+
+        if(productExistInCart == undefined){
+          selectedCart[0].products.push({product: data.id, quantity: data.quantity})
+        }
+        else{
+          let newQuantity = productExistInCart.quantity + parseInt(data.quantity)
+          let productIndex = selectedCart[0].products.findIndex((product)=> product.product == data.id)
+          selectedCart[0].products[productIndex].quantity = newQuantity
+        }
+    
+        let result = await cartModel.updateOne({_id:assignedCart._id},selectedCart[0])
+
+      }
+      catch (err) {
+        throw err;
+      }
+      
     })
 });
 

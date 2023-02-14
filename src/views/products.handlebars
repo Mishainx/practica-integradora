@@ -8,14 +8,14 @@
     <div class="listProductsC">
         {{#each productList.docs}}
         <div class="itemProductContainer">
-            <div class="itemProductId"><p>Id:</p><p id="productViewId">{{this.id}}</p></div>
+            <div class="itemProductId"><p>Id:</p><p class="productViewId">{{this.id}}</p></div>
             <p>Nombre: {{this.title}}</p>
             <p>Description: {{this.description}}</p>
             <p>Price: {{this.price}}</p>
             <p>Stock: {{this.stock}}</p>
             <div>
-                <input type="number" id="productQuantity">
-                <button id="productQuantityButton">Agregar al carrito</button>
+                <input type="number" class="productQuantity">
+                <button class="productQuantityButton">Agregar al carrito</button>
             </div>
 
 
