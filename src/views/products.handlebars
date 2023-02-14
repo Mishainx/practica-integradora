@@ -1,22 +1,39 @@
-<div id="listProductsContainer" class="listProductsContainer">
-  {{#each productlist.docs}}
-<div id="pageProducts">
-    <p>Nombre: {{this.title}}</p>
-    <p id="productViewId">Id: {{this.id}}</p>
-    <p>Id: {{this.description}}</p>
-    <p>Precio {{this.price}}</p>
-    <p>Stock: {{this.stock}}</p>
-    <p>code: {{this.code}}</p>
-    <input id="productQuantity" type="number" placeholder="Indique cantidad solicitada">
-    <button id="productQuantityButton">Enviar</button>
-</div>
-    {{/each}}
 
-<div>
-    <button>Previus page</button>
-    <input type="number" value={{productList.pagingCounter}}>
-    <button><a href="./products?page={{productList.nextPage}}" >Next Page</a></button>
-</div>
+
+<div id="listProductsContainer" class="listProductsContainer">
+    {{#if message}}
+    <h3 style="text-align: center;">{{message}}</h3>
+
+        {{else}}
+    <div class="listProductsC">
+        {{#each productList.docs}}
+        <div class="itemProductContainer">
+            <div class="itemProductId"><p>Id:</p><p id="productViewId">{{this.id}}</p></div>
+            <p>Nombre: {{this.title}}</p>
+            <p>Description: {{this.description}}</p>
+            <p>Price: {{this.price}}</p>
+            <p>Stock: {{this.stock}}</p>
+            <div>
+                <input type="number" id="productQuantity">
+                <button id="productQuantityButton">Agregar al carrito</button>
+            </div>
+
+
+        </div>
+        {{/each}}
+    </div>
+    <div class="productControlsContainer">
+        {{#if productList.hasPrevPage}}
+            <button id="prevPageButton" ><a href="{{productList.prevLink}}">Prev Page</a></button>
+        {{/if}}
+        <p>{{productList.page}}</p>
+
+        {{#if productList.hasNextPage}}
+            <button id="nextPageButton"><a href="{{productList.nextLink}}">Next Page</a></button>
+        {{/if}}
+    </div>
+        {{/if}}
+
     
 </div>
 

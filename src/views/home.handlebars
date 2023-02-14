@@ -1,5 +1,6 @@
+<div class="homeProductContainer">
+    <h2>Listado de productos</h2>
 <div class="homeHandlebars">
-<h2>Listado de productos</h2>
     {{#each productsList}}
         <div class="homeHandlebars2">
         <div class="homeProperties">
@@ -13,10 +14,9 @@
         <p class="hideP">{{this.thumbnail}}</p>
         </div>
         <button id="btnShow" class="btnShow">Ver completo</button>
-        </div>
-
+    </div>
     {{/each}}
-
+</div>
 </div>
 
 <script src="/js/homeHandlebars.js"></script>

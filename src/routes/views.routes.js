@@ -4,7 +4,6 @@ const messages = []
 import {productModel} from "../data/models/products.model.js"
 import cartModel from "../data/models/carts.model.js"
 
-
 // RouterViews.get "Home" devuelve una vista  del listado de productos sin socket server
 routerViews.get('/home', async (req,res)=>{
     try{
@@ -35,6 +34,7 @@ routerViews.get('/products', async (req,res)=>{
         let category = req.query.category || undefined
         const sort = req.query.sort || ""
         let stockQuery = req.query.stock || undefined
+        let message;
     
         //Validación en caso de que se haya ingresado limit
         if(isNaN(Number(limit))){
@@ -75,9 +75,64 @@ routerViews.get('/products', async (req,res)=>{
             }
     
         // Se realiza la paginación conforme los querys seleccionados
-        let productlist = await productModel.paginate({...category,...stockQuery},{lean:true, limit:limit, page:page, sort: {price:sort}})
+        let productList = await productModel.paginate({...category,...stockQuery},{lean:true, limit:limit, page:page, sort: {price:sort}})
+        let actualUrl = req.originalUrl
+        let actualUrlParams = new URLSearchParams(req.originalUrl)
+        let nextLink;
+        let prevLink;
 
-        res.status(200).render('products',{styleSheets:'css/styles', productlist})
+        //Configuración NextLink
+        if(actualUrl== "/api/views/products"){
+          let actualUrl = new URLSearchParams(req.originalUrl)
+          actualUrl.set('/api/views/products',2)
+          let nextLink = actualUrl.toString().replace("%2Fapi%2Fviews%2Fproducts=", "/api/views/products?page=")
+          productList.nextLink = nextLink
+        }
+
+        if(actualUrlParams.has("/api/views/products?page")){
+          let newPage = actualUrlParams.get("/api/views/products?page")
+          let newUrl = new URLSearchParams(req.originalUrl)
+          newUrl.set('/api/views/products?page',parseInt(...newPage)+1)
+    
+          let nextLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
+          productList.nextLink = nextLink
+        }
+
+        if(actualUrlParams.has("page")){
+          let newPage = actualUrlParams.get("page")
+          let newUrl = new URLSearchParams(req.originalUrl)
+          newUrl.set('page',parseInt(...newPage)+1)
+    
+          let nextLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
+          productList.nextLink = nextLink
+        }
+
+        //Configuración prevLink
+        if(actualUrlParams.has("/api/views/products?page")){
+          let newPage = actualUrlParams.get("/api/views/products?page")
+          let newUrl = new URLSearchParams(req.originalUrl)
+          newUrl.set('/api/views/products?page',parseInt(...newPage)-1)
+          let prevLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
+          productList.prevLink = prevLink
+        }
+
+        if(actualUrlParams.has("page")){
+          let newPage = actualUrlParams.get("page")
+          let newUrl = new URLSearchParams(req.originalUrl)
+          newUrl.set('page',parseInt(...newPage)-1)
+    
+          let prevLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
+          productList.prevLink = prevLink
+        }
+
+        console.log(productList )
+        if(page < 1 || page> parseInt(productList.totalPages)){
+          message = "La página ingresada no es válida"
+          res.status(300).render('products',{styleSheets:'css/styles', message})
+          return
+        }
+
+        res.status(200).render('products',{styleSheets:'css/styles', productList})
     }
     catch(err){
         res.status(500).send({error:err})

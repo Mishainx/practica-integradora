@@ -65,7 +65,6 @@ socketServer.on("connection", (socket) => {
    
   socket.on("findCode",async(data)=>{
   socket.emit("findCodeResult", await classManager.findCode(data))
-
   })
 
   socket.on("createItem", async(data)=>{
@@ -84,8 +83,8 @@ socketServer.on("connection", (socket) => {
     socket.emit("renderChanges",await productModel.find())
   })
 
-    socket.on("sendQuantity",(data)=>{
-      
+    socket.on("sendQuantity",async (data)=>{
+      await cartModel.create()
     })
 });
 

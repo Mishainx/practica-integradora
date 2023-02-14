@@ -32,17 +32,20 @@ main{
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    width: 300px;
     text-align: center;
     box-shadow: rgba(255, 252, 252, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
     padding: 10px;
+    height: 500px;
+    overflow:scroll;
+    width: 300px;
 }
 
 .realTimeItem{
  display: flex;
  justify-content: space-between;
  gap: 20px;
- margin: 5px; 
+ margin: 5px;
+ width: 300px; 
 }
 
 
@@ -75,17 +78,17 @@ main{
 
 .homeHandlebars{
     display: flex;
-    flex-direction: column;
-
+    flex-wrap: wrap;
+    justify-content: center;
     box-shadow: rgba(255, 252, 252, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
     padding: 10px;
+    gap:20px
 }
 
 .homeHandlebars2{
     display: flex;
     width: 300px;
     justify-content: space-between;
-    margin: 10px;
     align-items: center;
 }
 
@@ -147,4 +150,50 @@ main{
     display: flex;
     justify-content: center;
     flex-direction: column;
+}
+
+.listProductsContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    box-shadow: rgba(255, 252, 252, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
+    padding: 20px;
+    width: 90%;
+
+}
+
+.homeProductContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pageProducts{
+    display: flex;
+}
+
+.productControlsContainer{
+    display: flex;
+    justify-content: center;
+    gap: 20px
+}
+
+.listProductsC{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    
+}
+
+.itemProductContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+.itemProductId{
+    display: flex;
+    gap: 5px;
 }

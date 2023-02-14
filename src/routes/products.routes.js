@@ -5,7 +5,7 @@ import { productModel } from "../data/models/products.model.js";
 const router = Router();
 const productManager = new ProductManager();
 
-// la ruta api/products devuelve el listado de productos existentes en MongoDB. Posee query limit configurado para acotar la muestra devuelta
+// la ruta api/products devuelve el listado de productos existentes en MongoDB. Posee los siguientes querys configurados: limit, page, category, stock.
 router.get("/", async (req, res) => {
   try {
     const limit = req.query.limit || 10
@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
       return
     }
     //Validación en caso de que se haya ingresado page
-    if(isNaN(Number(page))){
+    if(isNaN(Number(page)) || parseInt(page)<1){
       res.status(400).send({status:"error", payload:"El valor de page inválido"})
       return
     }
@@ -56,26 +56,58 @@ router.get("/", async (req, res) => {
     let productlist= await productModel.paginate({...category,...stockQuery},{limit:limit, page:page, sort: {price:sort}})
     
     //Configuración prevLink
+    let actualUrl = req.originalUrl
+    let actualUrlParams = new URLSearchParams(req.originalUrl)
     let prevLink;
     let nextLink;
-    if(productlist.hasPrevPage != false ){
-      let actualUrl = new URLSearchParams(req.originalUrl)
-      actualUrl.set('page',`${parseInt(productlist.page) - 1}` )
-      prevLink= actualUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?')
-    }
-    else{
-     prevLink = false
-    }
+    
+    //Configuración NextLink
+    if(productlist.hasNextPage != false){
+      if(actualUrlParams.has("/api/products")){
+        let actualUrl = new URLSearchParams(req.originalUrl)
+        actualUrl.set('/api/products',2)
+        
+        nextLink = actualUrl.toString().replace("%2Fapi%2Fproducts=", "/api/products?page=")
+      }
 
-    //Configuración nextLink
-    if(productlist.hasNextPage != false ){
-      let actualUrl = new URLSearchParams(req.originalUrl)
-      actualUrl.set("page", productlist.page+1 )
-      nextLink = actualUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
-    }
-    else{
-     nextLink = false
-    }
+      if(actualUrlParams.has("/api/products?page")){
+        let newPage = actualUrlParams.get("/api/products?page")
+        let newUrl = new URLSearchParams(req.originalUrl)
+        newUrl.set('/api/products?page',parseInt(...newPage)+1)
+        nextLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
+      }
+
+      if(actualUrlParams.has("page")){
+        let newPage = actualUrlParams.get("page")
+        let newUrl = new URLSearchParams(req.originalUrl)
+        newUrl.set('page',parseInt(...newPage)+1)
+  
+      nextLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
+      }
+  }
+
+        //Configuración prevLink
+        if(productlist.hasPrevPage != false){
+          if(actualUrlParams.has("/api/products?page")){
+          let newPage = actualUrlParams.get("/api/products?page")
+          let newUrl = new URLSearchParams(req.originalUrl)
+          newUrl.set('/api/products?page',parseInt(...newPage)-1)
+          prevLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?page=')
+          }
+
+          if(actualUrlParams.has("page")){
+            let newPage = actualUrlParams.get("page")
+            let newUrl = new URLSearchParams(req.originalUrl)
+            newUrl.set('page',parseInt(...newPage)-1)
+            prevLink = newUrl.toString().replace(/%2F/g,'/').replace(/%3F/g,'?').replace('/api/products=&', '/api/products?')
+          }
+        }
+
+        if(productlist.page >productlist.totalPages || productlist.page<1 ){
+          res.status(404).send({error:"El page ingresado no es válido"})
+        return
+        }
+
     //Estructuración de la respuesta del servidor
     let response ={
       status:"succes",
@@ -97,7 +129,6 @@ router.get("/", async (req, res) => {
     res.status(500).send(err.message);
   }
 });
-
 
 // la ruta api/products/:pid devuelve el producto que coincida con la Id solicitada.
 router.get("/:pid", async(req,res)=>{
@@ -180,7 +211,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 // La ruta api/products/:pid (método delete) se encarga de eliminar un producto del listado.
 router.delete("/:pid", async (req, res) => {
   const  id  = req.params.pid;
@@ -209,7 +239,6 @@ router.delete("/:pid", async (req, res) => {
     res.status(500).send(err.message);
   }
 });
-
 
 // La ruta api/products/:pid (método put) se encarga de actualizar un producto  existente.
 router.put("/:pid", async (req, res) => {
@@ -240,7 +269,5 @@ router.put("/:pid", async (req, res) => {
     res.status(500).send(err.message);
   }
 });
-
-
 
 export default router;
