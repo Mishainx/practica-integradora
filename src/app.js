@@ -13,19 +13,23 @@ import { productModel } from "./data/models/products.model.js";
 import cartModel from "./data/models/carts.model.js";
 const classManager= new ProductManager
 const cartManager = new CartManager();
-export let assignedCart;
 const mensajes = []
 import { __dirname } from '../utils.js';
-
-
+import MongoStore from "connect-mongo";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import sessionsRouter from "./routes/sessions.router.js";
+import rootRouter from "./routes/root.routes.js";
+export let assignedCart;
 
 //Configuración dotenv
 dotenv.config();
-const app = express();
+export const app = express();
 const PORT = process.env.SERVER_PORT || 8181;
 const DB_USER = process.env.DB_USER;
 const DB_PASS = process.env.DB_PASS;
 const DB_NAME = process.env.DB_NAME;
+const STRING_CONNECTION = `mongodb+srv://${DB_USER}:${DB_PASS}@cluster0.tjewfez.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`
 
 //Configuración del servidor
 const httpServer = app.listen(PORT, async () => {
@@ -40,7 +44,24 @@ const socketServer = new Server(httpServer)
 //Middelware para trabajar con archivos .Json
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
+//Mongo store para crear sesiones
+app.use(
+  session({
+    secret: "coderhouse",
+    resave: true,
+    saveUninitialized: true,
+    store: MongoStore.create({
+      mongoUrl: STRING_CONNECTION,
+      mongoOptions: {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+      ttl: 1000,
+    }),
+  })
+);
 
 //Handlebars
 app.engine('handlebars', engine());
@@ -54,7 +75,6 @@ app.post("/socketMessage", (req, res) => {
 
   res.send("ok");
 });
-
 
 //Configuración socket server
 socketServer.on("connection", async(socket) => {
@@ -139,14 +159,16 @@ const isValidStartData = () => {
 console.log("isValidStartData", isValidStartData());
 isValidStartData() && environment();
 
+// Middleware para agregar a las variables locales del objeto Response los datos de sesión.
+app.use((req, res, next)=>{ 
+  res.locals.session = req.session;
+  next();
+})
 
 //Rutas express
 app.use("/messages", messageRoute);
 app.use('/api/views', routerViews)
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
-
-//Redireccionamiento a HomeHandlebars para  iniciar en Home en caso de que no exista la ruta
-app.get('*',(req,res)=>{
-  res.status(301).redirect('/api/views/home')
-})
+app.use("/api/sessions", sessionsRouter);
+app.use("/", rootRouter) // Manejo de ruta raíz

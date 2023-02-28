@@ -4,10 +4,11 @@ const messages = []
 import {productModel} from "../data/models/products.model.js"
 import cartModel from "../data/models/carts.model.js"
 import { assignedCart } from "../app.js";
+import userModel from "../data/models/user.model.js";
 
 
 // RouterViews.get "Home" devuelve una vista  del listado de productos sin socket server
-routerViews.get('/home', async (req,res)=>{
+routerViews.get('/home',auth, async (req,res)=>{
     try{
         let cartDirection = await assignedCart._id
         const productsList = await productModel.find().lean()
@@ -19,7 +20,7 @@ routerViews.get('/home', async (req,res)=>{
 })
 
 // RouterViews.GET "Real Time Products" devuelve una vista  del listado de productos que actualiza cambios en vivo con socket server
-routerViews.get('/realTimeProducts', async (req,res)=>{
+routerViews.get('/realTimeProducts',auth, async (req,res)=>{
     try{
       let cartDirection = await assignedCart._id
         const productsList = await productModel.find().lean()
@@ -31,8 +32,18 @@ routerViews.get('/realTimeProducts', async (req,res)=>{
 })
 
 // RouterViews.GET "Products" devuelve una vista  del listado de productos con paginación
-routerViews.get('/products', async (req,res)=>{
+routerViews.get('/products',auth, async (req,res)=>{
     try{
+
+      let findUser = await userModel.findOne({email:req.session.user})
+      let user ={
+        email: req.session.user,
+        rol: req.session.admin? "Admin": "User",
+        name: findUser.first_name,
+        surname: findUser.last_name,
+        age: findUser.age
+      }
+
       let cartDirection = await assignedCart._id
         const limit = req.query.limit || 10
         const page = req.query.page || 1
@@ -145,7 +156,7 @@ routerViews.get('/products', async (req,res)=>{
           return
         }
 
-        res.status(200).render('products',{styleSheets:'css/styles', productList,cartDirection})
+        res.status(200).render('products',{styleSheets:'css/styles', productList,cartDirection,user})
     }
     catch(err){
         res.status(500).send({error:err})
@@ -153,12 +164,12 @@ routerViews.get('/products', async (req,res)=>{
 })
 
 // RouterViews.GET "Chat devuelve una vista  donde funciona el chat conectado a Mongo y socketserver
-routerViews.get("/chat",async(req,res)=>{
+routerViews.get("/chat",auth,async(req,res)=>{
   let cartDirection = await assignedCart._id
   res.status(200).render('chat',{title:"Chat",styleSheets:'css/styles',cartDirection})
 })
 
-routerViews.get("/carts/:cid",async (req,res)=>{
+routerViews.get("/carts/:cid",auth,async (req,res)=>{
   let cartDirection = await assignedCart._id
     const cartId = req.params.cid
     let cart;
@@ -184,9 +195,18 @@ routerViews.get("/carts/:cid",async (req,res)=>{
     res.status(200).render('carts_Id',{title:"Cart Id",styleSheets:'css/styles', cart, cartDirection})
 })
 
-routerViews.get('/carts',async (req,res)=>{
+routerViews.get('/carts',auth,async (req,res)=>{
     let message = "Para solicitar un Cart por favor indique el Id (/api/views/carts/:cid)"
     res.status(200).render('carts_Id',{title:"Cart Id",styleSheets:'css/styles', message})
 })
+
+
+export function auth(req,res,next){
+  if(req.session?.user != undefined){
+    return next()
+  }
+  return res.status(401).redirect("/login")
+}
+
 
 export default routerViews

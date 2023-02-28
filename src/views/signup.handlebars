@@ -1,0 +1,42 @@
+<div id="signUpContainer">
+  <form id="myForm" method="GET" class="speaker-form">
+    <h3>Registro</h3>
+    <div class="form-row">
+      <label class="full-user" for="full-name">Nombre</label>
+      <input name="first_name" type="text" />
+    </div>
+      <div class="form-row">
+        <label class="full-user" for="full-user">Lastname</label>
+        <input  name="last_name" type="text" />
+      </div>
+    <div class="form-row">
+      <label class="full-user" for="email">E-mail</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        placeholder="joe@example.com"
+      />
+      <div class="form-row">
+        <label class="full-user" for="full-user">Age</label>
+        <input  name="age" type="number" min="1"/>
+      </div>
+      <div class="form-row">
+        <label class="full-user" for="full-user">Password</label>
+        <input name="password" type="password" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <button id="signup" type="button" class="signup">
+        Crear usuario
+      </button>
+    </div>
+
+    <p>Si ya tiene usuario: <a class="registerLogin" href="/login">Login</a></p>
+  </form>
+      <div id="signUpMessage"></div>
+
+  
+
+</div>

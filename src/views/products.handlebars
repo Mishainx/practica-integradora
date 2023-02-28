@@ -1,10 +1,15 @@
+
 <div id="listProductsContainer" class="listProductsContainer">
+    
+{{#if user}}
+    <h3 class="welcomeTitle">Bienvenido {{user.name}} ({{user.rol}})</h3>
+{{/if}}
+
     <div id="messageDiv"></div>
 
     {{#if message}}
-    <h3 style="text-align: center;">{{message}}</h3>
-
-        {{else}}
+        <h3 style="text-align: center;">{{message}}</h3>
+    {{else}}
     <div class="listProductsC">
         {{#each productList.docs}}
         <div class="itemProductContainer">

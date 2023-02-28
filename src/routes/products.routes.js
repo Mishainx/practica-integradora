@@ -1,4 +1,5 @@
-import { response, Router, urlencoded } from "express";
+import { Router } from "express";
+import session from "express-session";
 import { ProductManager } from "../data/classes/DBManager.js";
 import { productModel } from "../data/models/products.model.js";
 
@@ -275,5 +276,6 @@ router.put("/:pid", async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
 
 export default router;

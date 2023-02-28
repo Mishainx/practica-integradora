@@ -1,0 +1,22 @@
+
+<div>
+  <div class="loginContainer" id="loginContainer">
+    <h3>Login</h3>
+    <input type="text" placeholder="Username" name="username" id="username"/>
+
+    <input
+      type="password"
+      placeholder="Password"
+      name="password"
+      id="password"
+    />
+    <button id="send">Enviar</button>
+    <a class="registerLogin" href="/signup">Registrarse</a>
+    {{#if message}}
+    <p>{{message}}</p>
+    {{/if}}
+
+    <div id="loginError"></div>
+  </div>
+
+</div>

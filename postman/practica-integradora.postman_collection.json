@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "66ba9081-db55-41c4-81db-fd5f3028f7f0",
+		"_postman_id": "40d0c13d-9f65-4a2e-b98d-76c2761d66d7",
 		"name": "practica-integradora",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25232619"
@@ -330,6 +330,66 @@
 						"api",
 						"carts",
 						"63ec04bd558dfcd8d95282ff"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sessions/signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\": \"Juan perez\",\r\n    \"last_name\": \"Perez\",\r\n    \"email\": \"juanperez@ciudad.com.ar\",\r\n    \"age\": 80,\r\n    \"password\": \"asdasdasd1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/sessions/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"sessions",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sessions/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"adminCoder@coder.com\",\r\n    \"password\": \"adminCod3r123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/sessions/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"sessions",
+						"login"
 					]
 				}
 			},

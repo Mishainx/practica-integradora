@@ -120,6 +120,13 @@ router.post("/:cid/products/:pid", async (req, res) => {
     return
   }
 
+  //Comprobación de stock
+  let checkStock = productExist.stock
+  if(parseInt(quantity)>checkStock){
+    res.status(400).send({status:"Error", message:"No hay stock suficiente para la cantidad solicitada"})
+  return
+  }
+
   //Si se comprueba la validez de los parámetros se ejecutan las acciones para agregar el producto al carrito
   try {
     let selectedCart = await cartModel.find({_id: cartId})

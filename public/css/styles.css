@@ -208,3 +208,54 @@ header{
     justify-content: center;  
     align-items: center;
 }
+
+.loginContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    box-shadow: rgba(255, 252, 252, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
+    padding: 10px;
+
+}
+.loginContainer h3{
+    text-align: center;
+}
+
+.registerLogin{
+    text-align: center;
+    text-decoration: none;
+    text-decoration: none;
+    color: white;
+}
+
+.speaker-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    box-shadow: rgba(255, 252, 252, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
+    padding: 20px;
+}
+
+.speaker-form h3{
+text-align: center;
+}
+
+
+.form-row{
+    display: flex;
+    flex-direction: column; 
+    gap: 5px; 
+    margin: 5px;
+}
+
+.signup{
+    margin-top: 5px;
+}
+
+.profileImg{
+    width: 200px;
+}
+
+.welcomeTitle{
+    text-align: center;
+}

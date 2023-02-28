@@ -8,16 +8,21 @@
     <link rel="stylesheet" href="/{{styleSheets}}.css">
 </head>
 <body>
+
     <header>
+    {{#if noNav}}
+    {{else}}
         <div>
             <a id="homeNavLink" class="navLink" href="./home">Home</a>
             <a id="productsNavLink" class="navLink" href="./products">Products</a>
             <a id="realTimeNavLink" class="navLink" href="./realTimeProducts">Real Time Products</a>
             <a id="chatNavLink" class="navLink" href="./chat">Chat</a>
+            <a id="profileNavLink" class="navLink" href="../../profile"><i id="profileLink" class="fa fa-user" aria-hidden="true"></i></i></a>
             <a  id="cartNavLink" class="navLink" href="./carts/{{cartDirection}}"><i class="fa-solid fa-cart-shopping"></i></a>
         </div>
-
+        {{/if}}
     </header>
+
     <Main>
     {{{body}}}
     </Main>
@@ -25,3 +30,5 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </body>
 </html>
+
+<script src="js/index.js"></script>
